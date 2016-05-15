@@ -58,7 +58,7 @@ public class DBConnect {
             
             
             ////////////////////////////////////////////
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/project","root","");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/Calendar","root","");
         }catch (Exception e){
             e.printStackTrace();
         }
