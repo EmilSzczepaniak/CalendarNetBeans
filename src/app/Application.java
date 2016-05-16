@@ -5,14 +5,19 @@
  */
 package app;
 
+import java.applet.AudioClip;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import static java.lang.Thread.sleep;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -34,11 +39,13 @@ public class Application extends javax.swing.JFrame {
      * Creates new form Application
      */
     public Application() {
+        super("Calendar by Emil Szczepaniak");
         initComponents();
         conn = DBConnect.getConnection();
         Update_table();
         showCurrentTime();
-        setAlarm();
+        
+       
 
     }
 
@@ -55,35 +62,41 @@ public class Application extends javax.swing.JFrame {
         }
     }
 
-   private void setAlarm(){
-       Date currentDate = new Date();
-       SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-       String dateString = dateFormat.format(currentDate);
-       //System.out.println(dateString);
-       //System.out.println(dateAlarm);
-       if(chckbAlarm.isSelected()){
-           dateAlarm = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(spinerTime.getValue());
-       }
-       if(dateString.equals(dateAlarm)){
-           JOptionPane.showMessageDialog(null, "Alarm !");
-       }
-       
-       
+   private void PlayAlarm(){
    
-       
+    File audioFile = new File("alarm.WAV");
+    
+    
+    try{
+        Clip clip = AudioSystem.getClip();
+        clip.open(AudioSystem.getAudioInputStream(audioFile));
+        clip.start();
+        //Thread.sleep(clip.getMicrosecondLength()/1000);
+       int result = JOptionPane.showConfirmDialog(null,"Alarm !!!");
+       if(result == JOptionPane.OK_OPTION){
+           clip.stop();
+       }
+        
+        
+        
+    }catch(Exception e){
+        JOptionPane.showMessageDialog(null, e);
+    }
+    
    }
+   
    private void showCurrentTime(){
       
     Thread clock = new Thread(){
            public void run(){
               for(;;){
            Calendar cal = new GregorianCalendar();
-           SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+           SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
            int day = cal.get(Calendar.DAY_OF_MONTH);
            int month = cal.get(Calendar.MONTH)+1;
            int year = cal.get(Calendar.YEAR);
            
-           java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("hh:mm:ss");
+           java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("kk:mm:ss");
            java.text.SimpleDateFormat df1 = new java.text.SimpleDateFormat("yyyy-MM-dd");
            
       
@@ -102,13 +115,17 @@ public class Application extends javax.swing.JFrame {
            //System.out.println(hour+":"+minute+":"+second);
            timeLabel.setText(time);
            dateLabel.setText(date);
-           String alarm = dateAlarm = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(spinerTime.getValue());
+           String alarm = dateAlarm;
+           dateAlarm = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss").format(spinerTime.getValue());
                 try{
                     
                     System.out.println(currentDateAndTime);
-                    System.out.println(dateAlarm);
-                    if(currentDateAndTime.equals(dateAlarm)){
-                        JOptionPane.showMessageDialog(null, "Alarm !");
+                    System.out.println(alarm);
+                    if(currentDateAndTime.equals(alarm)){
+                       // Toolkit.getDefaultToolkit().beep();
+                       // JOptionPane.showMessageDialog(null, date);
+                        PlayAlarm();
+                        
                     }
                    sleep(1000); 
                 }catch(Exception e){
@@ -159,6 +176,11 @@ public class Application extends javax.swing.JFrame {
         });
 
         btnCancelEvent.setText("Anuluj");
+        btnCancelEvent.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCancelEventMouseClicked(evt);
+            }
+        });
         btnCancelEvent.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelEventActionPerformed(evt);
@@ -269,6 +291,8 @@ public class Application extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(41, 41, 41)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(206, 206, 206))
             .addGroup(layout.createSequentialGroup()
@@ -289,8 +313,7 @@ public class Application extends javax.swing.JFrame {
                                 .addComponent(spinerTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(chckbAlarm))
-                            .addComponent(dateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(dateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnAddEvent)
                         .addGap(124, 124, 124)
@@ -313,9 +336,9 @@ public class Application extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(timeLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(dateLabel)))
-                .addGap(69, 69, 69)
+                .addGap(75, 75, 75)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -433,9 +456,13 @@ public class Application extends javax.swing.JFrame {
 
     private void btnCancelEventActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelEventActionPerformed
      
-        System.out.println(new SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(spinerTime.getValue()));
+        
         
     }//GEN-LAST:event_btnCancelEventActionPerformed
+
+    private void btnCancelEventMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelEventMouseClicked
+        
+    }//GEN-LAST:event_btnCancelEventMouseClicked
 
     /**
      * @param args the command line arguments

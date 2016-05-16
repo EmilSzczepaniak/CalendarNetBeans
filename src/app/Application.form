@@ -50,6 +50,8 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="32767" attributes="0"/>
+              <Component id="timeLabel" min="-2" pref="166" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
               <Component id="jLabel1" min="-2" pref="268" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="206" max="-2" attributes="0"/>
           </Group>
@@ -74,7 +76,6 @@
                               <Component id="chckbAlarm" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="dateLabel" alignment="0" min="-2" pref="166" max="-2" attributes="0"/>
-                          <Component id="timeLabel" alignment="0" min="-2" pref="166" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
@@ -105,11 +106,11 @@
                   <Component id="jLabel1" alignment="0" min="-2" pref="90" max="-2" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="timeLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="dateLabel" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace min="-2" pref="69" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="75" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -168,6 +169,7 @@
         <Property name="text" type="java.lang.String" value="Anuluj"/>
       </Properties>
       <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnCancelEventMouseClicked"/>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCancelEventActionPerformed"/>
       </Events>
     </Component>
