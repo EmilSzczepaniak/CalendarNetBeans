@@ -25,7 +25,7 @@ import net.proteanit.sql.DbUtils;
  * @author Emil
  */
 public class Application extends javax.swing.JFrame {
-
+    static String dateAlarm ;
     Connection conn = null;
     ResultSet rs = null;
     PreparedStatement pst = null;
@@ -37,20 +37,11 @@ public class Application extends javax.swing.JFrame {
         initComponents();
         conn = DBConnect.getConnection();
         Update_table();
-        
+        showCurrentTime();
         setAlarm();
 
     }
 
-    private void spinerTime() {
-        SpinnerDateModel model = new SpinnerDateModel();
-        model.setCalendarField(Calendar.MINUTE);
-        spinerTime = new JSpinner();
-
-        spinerTime.setModel(model);
-        spinerTime.setEditor(new JSpinner.DateEditor(spinerTime, "h:mm a"));
-
-    }
 
     private void Update_table() {
         try {
@@ -68,36 +59,66 @@ public class Application extends javax.swing.JFrame {
        Date currentDate = new Date();
        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
        String dateString = dateFormat.format(currentDate);
-       String currentTime = "Sun May 15 22:03:00 CEST 2016";
-       
-       String alarm = spinerTime.getValue().toString();
-       System.out.println(currentTime);
-       
-       if(alarm == null ? currentTime == null : alarm.equals(currentTime)){
-           JOptionPane.showMessageDialog(null, "Alarm!!!");
+       //System.out.println(dateString);
+       //System.out.println(dateAlarm);
+       if(chckbAlarm.isSelected()){
+           dateAlarm = new SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(spinerTime.getValue());
        }
+       if(dateString.equals(dateAlarm)){
+           JOptionPane.showMessageDialog(null, "Alarm !");
+       }
+       
+       
+   
        
    }
    private void showCurrentTime(){
       
-       try{
+    Thread clock = new Thread(){
+           public void run(){
+              for(;;){
            Calendar cal = new GregorianCalendar();
+           SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
            int day = cal.get(Calendar.DAY_OF_MONTH);
-           int month = cal.get(Calendar.MONTH);
+           int month = cal.get(Calendar.MONTH)+1;
            int year = cal.get(Calendar.YEAR);
+           
+           java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("hh:mm:ss");
+           java.text.SimpleDateFormat df1 = new java.text.SimpleDateFormat("yyyy-MM-dd");
+           
+      
+           
+          
            
            int second = cal.get(Calendar.SECOND);
            int minute= cal.get(Calendar.MINUTE);
-           int hour = cal.get(Calendar.HOUR);
+           int hour = cal.get(Calendar.HOUR_OF_DAY);
+           
+           
+           String time = (df.format(cal.getTime()));
+           String date = (df1.format(cal.getTime()));
+           String currentDateAndTime = (date+ " " +time );
            
            //System.out.println(hour+":"+minute+":"+second);
-           String time = (hour+":"+minute+":"+second);
-           sleep(1000);
-           
-       }catch(Exception e){
-           e.printStackTrace();
-       }
-       
+           timeLabel.setText(time);
+           dateLabel.setText(date);
+           String alarm = dateAlarm = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(spinerTime.getValue());
+                try{
+                    
+                    System.out.println(currentDateAndTime);
+                    System.out.println(dateAlarm);
+                    if(currentDateAndTime.equals(dateAlarm)){
+                        JOptionPane.showMessageDialog(null, "Alarm !");
+                    }
+                   sleep(1000); 
+                }catch(Exception e){
+                    e.printStackTrace();
+                    
+                }
+              } 
+           }
+           };
+           clock.start();
    }
 
     @SuppressWarnings("unchecked")
@@ -123,6 +144,7 @@ public class Application extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         timeLabel = new javax.swing.JLabel();
+        dateLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         menuCalendar = new javax.swing.JMenu();
         menuCalendar1 = new javax.swing.JMenuItem();
@@ -137,6 +159,11 @@ public class Application extends javax.swing.JFrame {
         });
 
         btnCancelEvent.setText("Anuluj");
+        btnCancelEvent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelEventActionPerformed(evt);
+            }
+        });
 
         btnDeleteEvent.setText("Usuń");
         btnDeleteEvent.addActionListener(new java.awt.event.ActionListener() {
@@ -212,6 +239,15 @@ public class Application extends javax.swing.JFrame {
 
         jLabel5.setText("Godzina");
 
+        timeLabel.setBackground(new java.awt.Color(0, 0, 0));
+        timeLabel.setFont(new java.awt.Font("Arial Narrow", 1, 36)); // NOI18N
+        timeLabel.setForeground(new java.awt.Color(0, 0, 51));
+        timeLabel.setText("TIME");
+
+        dateLabel.setFont(new java.awt.Font("Arial Narrow", 1, 36)); // NOI18N
+        dateLabel.setForeground(new java.awt.Color(0, 0, 51));
+        dateLabel.setText("DATE");
+
         menuCalendar.setText("Pomoc");
 
         menuCalendar1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
@@ -231,56 +267,55 @@ public class Application extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(206, 206, 206))
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(tfID, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(tfPlace, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(dcEventDate, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(spinerTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(chckbAlarm))
+                            .addComponent(dateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnAddEvent)
-                        .addGap(159, 159, 159)
+                        .addGap(124, 124, 124)
                         .addComponent(btnCancelEvent))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel4)
-                                .addComponent(jLabel3)
-                                .addComponent(jLabel2)
-                                .addComponent(jLabel5))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(tfID, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(tfPlace, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(dcEventDate, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(spinerTime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(chckbAlarm))))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(28, 28, 28))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(jScrollPane2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(btnDeleteEvent)
-                        .addGap(177, 177, 177)
-                        .addComponent(btnExit)
-                        .addGap(77, 77, 77))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(42, 42, 42)
-                .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(220, 220, 220))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnExit)))
+                .addGap(23, 23, 23))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(timeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(timeLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(dateLabel)))
+                .addGap(69, 69, 69)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -392,10 +427,15 @@ public class Application extends javax.swing.JFrame {
     }//GEN-LAST:event_tblDataBaseDataMouseClicked
 
     private void chckbAlarmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chckbAlarmActionPerformed
-        String time = spinerTime.getValue().toString();
-        System.out.println(time);
+       System.out.println(new SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(spinerTime.getValue()));
         
     }//GEN-LAST:event_chckbAlarmActionPerformed
+
+    private void btnCancelEventActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelEventActionPerformed
+     
+        System.out.println(new SimpleDateFormat("yyyy.MM.dd hh:mm:ss").format(spinerTime.getValue()));
+        
+    }//GEN-LAST:event_btnCancelEventActionPerformed
 
     /**
      * @param args the command line arguments
@@ -442,6 +482,7 @@ public class Application extends javax.swing.JFrame {
     private javax.swing.JButton btnDeleteEvent;
     private javax.swing.JButton btnExit;
     private javax.swing.JCheckBox chckbAlarm;
+    private javax.swing.JLabel dateLabel;
     private com.toedter.calendar.JDateChooser dcEventDate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
