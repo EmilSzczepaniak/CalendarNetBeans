@@ -6,7 +6,7 @@
 package app;
 
 import java.applet.AudioClip;
-import java.awt.Toolkit;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -18,7 +18,10 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -35,7 +38,7 @@ public class Application extends javax.swing.JFrame {
     Connection conn = null;
     ResultSet rs = null;
     PreparedStatement pst = null;
-
+    JLabel myImage;
     /**
      * Creates new form Application
      */
@@ -43,18 +46,15 @@ public class Application extends javax.swing.JFrame {
         super("Calendar by Emil Szczepaniak");
         
         initComponents();
-        //setIcon();
-        
         conn = DBConnect.getConnection();
         Update_table();
         showCurrentTime();
         
-       
+        setIconImage(new ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\src\\app\\app_icon.png").getImage());
 
     }
-    private void setIcon(){
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("app_icon.png")));
-    }
+    
+    
 
 
     private void Update_table() {
@@ -173,7 +173,9 @@ public class Application extends javax.swing.JFrame {
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         btnDeleteEvent = new javax.swing.JButton();
         btnAddEvent = new javax.swing.JButton();
-        jMenuBar1 = new javax.swing.JMenuBar();
+        mbCalendar = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
         menuCalendar = new javax.swing.JMenu();
         menuCalendar1 = new javax.swing.JMenuItem();
 
@@ -385,11 +387,23 @@ public class Application extends javax.swing.JFrame {
         );
 
         getContentPane().add(jPanel1);
-        jPanel1.setBounds(0, 10, 850, 490);
+        jPanel1.setBounds(0, 0, 850, 500);
+
+        mbCalendar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 255), 1, true));
+
+        jMenu1.setText("Plik");
+
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\menu_save_icon.png")); // NOI18N
+        jMenuItem1.setText("Zapisz");
+        jMenu1.add(jMenuItem1);
+
+        mbCalendar.add(jMenu1);
 
         menuCalendar.setText("Pomoc");
 
         menuCalendar1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        menuCalendar1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\about_menu_icon.png")); // NOI18N
         menuCalendar1.setText("O programie");
         menuCalendar1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -398,9 +412,9 @@ public class Application extends javax.swing.JFrame {
         });
         menuCalendar.add(menuCalendar1);
 
-        jMenuBar1.add(menuCalendar);
+        mbCalendar.add(menuCalendar);
 
-        setJMenuBar(jMenuBar1);
+        setJMenuBar(mbCalendar);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -526,7 +540,7 @@ public class Application extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Application().setVisible(true);
-
+                
             }
         });
     }
@@ -544,11 +558,13 @@ public class Application extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JMenuBar mbCalendar;
     private javax.swing.JMenu menuCalendar;
     private javax.swing.JMenuItem menuCalendar1;
     private javax.swing.JSpinner spinerTime;
@@ -558,4 +574,5 @@ public class Application extends javax.swing.JFrame {
     private javax.swing.JTextField tfPlace;
     private javax.swing.JLabel timeLabel;
     // End of variables declaration//GEN-END:variables
+
 }
