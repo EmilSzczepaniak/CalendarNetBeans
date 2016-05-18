@@ -10,12 +10,17 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FileWriter;
+import java.io.IOException;
 import static java.lang.Thread.sleep;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
@@ -24,9 +29,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.Timer;
+import javax.swing.table.TableModel;
 import net.proteanit.sql.DbUtils;
 
 /**
@@ -51,7 +58,33 @@ public class Application extends javax.swing.JFrame {
         showCurrentTime();
         
         setIconImage(new ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\src\\app\\app_icon.png").getImage());
-
+        
+    }
+    @SuppressWarnings("empty-statement")
+    private void saveToCSV() throws IOException{
+        String separator = ";";
+        try{
+            FileWriter csv = new FileWriter("calendar.csv");
+           for(int i =0;i < tblDataBaseData.getColumnCount(); i++){
+               csv.write(tblDataBaseData.getColumnName(i) + "\t");
+               csv.write(separator);
+              
+           } 
+           csv.write("\n");
+           
+           for(int i=0; i<tblDataBaseData.getRowCount(); i++){
+               for(int j=0; j<tblDataBaseData.getColumnCount();j++){
+                   csv.write(tblDataBaseData.getValueAt(i, j).toString()+"\t");
+                   csv.write(separator);
+               }
+               csv.write("\n");
+           }
+           csv.close();
+           
+        }catch(IOException e){
+            JOptionPane.showMessageDialog(null, e);
+        }
+    
     }
     private void deleteEvent(){
         try{
@@ -452,6 +485,11 @@ public class Application extends javax.swing.JFrame {
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\menu_save_icon.png")); // NOI18N
         jMenuItem1.setText("Zapisz");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem1);
 
         mbCalendar.add(jMenu1);
@@ -490,6 +528,7 @@ public class Application extends javax.swing.JFrame {
         });
         menuDelete.add(menuDeleteOlderThanYear);
 
+        menuDeleteOlderThanAnyValue.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\terminal_icon.png")); // NOI18N
         menuDeleteOlderThanAnyValue.setText("Wprowadź wartość");
         menuDeleteOlderThanAnyValue.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -644,6 +683,52 @@ public class Application extends javax.swing.JFrame {
        }
        Update_table();
     }//GEN-LAST:event_menuDeleteOlderThanYearActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+       
+        JFileChooser fs = new JFileChooser(".");
+        
+        
+        fs.setDialogTitle("Zapisz");
+        //fs.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        //FileFilter filter = (FileFilter) new ExtensionFileFilter("JPG and JPEG", new String[] { "JPG", "JPEG" });
+        //fs.setFileFilter((javax.swing.filechooser.FileFilter) filter);
+         fs.setCurrentDirectory(new java.io.File("C:/Users/Emil/Desktop"));
+        int result = fs.showSaveDialog(null);
+        if(result == JFileChooser.APPROVE_OPTION){
+            try {
+                File fi = fs.getSelectedFile();
+            String separator = ";";
+       
+            FileWriter csv = new FileWriter(fi);
+           for(int i =0;i < tblDataBaseData.getColumnCount(); i++){
+               csv.write(tblDataBaseData.getColumnName(i) + "\t");
+               csv.write(separator);
+              
+           } 
+           csv.write("\n");
+           
+           for(int i=0; i<tblDataBaseData.getRowCount(); i++){
+               for(int j=0; j<tblDataBaseData.getColumnCount();j++){
+                   csv.write(tblDataBaseData.getValueAt(i, j).toString()+"\t");
+                   csv.write(separator);
+               }
+               csv.write("\n");
+           }
+           csv.close();
+           
+        
+            JOptionPane.showMessageDialog(null, "Zapisano do CSV !");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+            
+            
+            
+        }
+        
+        
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
      * @param args the command line arguments
