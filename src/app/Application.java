@@ -53,7 +53,68 @@ public class Application extends javax.swing.JFrame {
         setIconImage(new ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\src\\app\\app_icon.png").getImage());
 
     }
-    
+    private void deleteEvent(){
+        try{
+           String sql = "delete from events where id =?";
+           pst = conn.prepareStatement(sql);
+           pst.setString(1,tfID.getText());
+           pst.execute();
+           JOptionPane.showMessageDialog(null,"Usunięto");
+       }catch(Exception e){
+           JOptionPane.showMessageDialog(null,e);
+       }
+       Update_table();
+           
+    }
+    private void showDataFromDataBaseTable(){
+         try{
+           int row = tblDataBaseData.getSelectedRow();
+           String tblDataBase_click=(tblDataBaseData.getModel().getValueAt(row, 0)).toString();
+           String sql = "select* from events where id="+tblDataBase_click+"";
+           pst=conn.prepareStatement(sql);
+           rs=pst.executeQuery();
+           if(rs.next()){
+               String add1 = rs.getString("id");
+               tfID.setText(add1);
+               String add2 = rs.getString("miejsce");
+               tfPlace.setText(add2);
+               Date add3 = rs.getDate("data");
+               dcEventDate.setDate(add3);
+               
+           }
+           
+           
+       } catch(Exception e){
+           JOptionPane.showMessageDialog(null, e);
+       }
+    }
+    private void setAlarm(){
+        String alarmTime =("1970.01.01 00:00:00");
+        try{
+        alarmTime = (new SimpleDateFormat("yyyy.MM.dd kk:mm:ss").format(spinerTime.getValue()));
+        
+        }catch(Exception e ){
+            JOptionPane.showMessageDialog(null, e);
+        }
+        JOptionPane.showMessageDialog(null, "Alarm ustawiony na : "+alarmTime);
+    }
+    private void addToDatabase(){
+        try {
+
+            String sql = "insert into events values(id,?,?,?)";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, ((JTextField) dcEventDate.getDateEditor().getUiComponent()).getText());
+            pst.setString(2, tfPlace.getText());
+            pst.setString(3, taEvent.getText());
+
+            pst.execute();
+            JOptionPane.showMessageDialog(null, "Dodano nowe wydarznie!");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+        Update_table();
+    }
     
 
 
@@ -71,11 +132,8 @@ public class Application extends javax.swing.JFrame {
 
    private void PlayAlarm(){
    
-    File audioFile = new File("alarm.WAV");
-    
-    
+    File audioFile = new File("alarm_alert.WAV");
     try{
-        
         Clip clip = AudioSystem.getClip();
         clip.open(AudioSystem.getAudioInputStream(audioFile));
         clip.start();
@@ -107,15 +165,10 @@ public class Application extends javax.swing.JFrame {
            
            java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("kk:mm:ss");
            java.text.SimpleDateFormat df1 = new java.text.SimpleDateFormat("yyyy-MM-dd");
-           
-      
-           
-          
-           
+        
            int second = cal.get(Calendar.SECOND);
            int minute= cal.get(Calendar.MINUTE);
            int hour = cal.get(Calendar.HOUR_OF_DAY);
-           
            
            String time = (df.format(cal.getTime()));
            String date = (df1.format(cal.getTime()));
@@ -127,14 +180,11 @@ public class Application extends javax.swing.JFrame {
            String alarm = dateAlarm;
            dateAlarm = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss").format(spinerTime.getValue());
                 try{
-                    
                     System.out.println(currentDateAndTime);
                     System.out.println(alarm);
                     if(currentDateAndTime.equals(alarm)){
-                       // Toolkit.getDefaultToolkit().beep();
-                       // JOptionPane.showMessageDialog(null, date);
+                       
                         PlayAlarm();
-                        
                     }
                    sleep(1000); 
                 }catch(Exception e){
@@ -176,6 +226,12 @@ public class Application extends javax.swing.JFrame {
         mbCalendar = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        menuDelete = new javax.swing.JMenu();
+        menuDeleteOlderThan1Day = new javax.swing.JMenuItem();
+        menuDeleteOlderThanWeek = new javax.swing.JMenuItem();
+        menuDeleteOlderThanMonth = new javax.swing.JMenuItem();
+        menuDeleteOlderThanYear = new javax.swing.JMenuItem();
+        menuDeleteOlderThanAnyValue = new javax.swing.JMenuItem();
         menuCalendar = new javax.swing.JMenu();
         menuCalendar1 = new javax.swing.JMenuItem();
 
@@ -400,6 +456,50 @@ public class Application extends javax.swing.JFrame {
 
         mbCalendar.add(jMenu1);
 
+        menuDelete.setText("Usuń");
+
+        menuDeleteOlderThan1Day.setText("Starsze niż 1 dzień");
+        menuDeleteOlderThan1Day.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuDeleteOlderThan1DayActionPerformed(evt);
+            }
+        });
+        menuDelete.add(menuDeleteOlderThan1Day);
+
+        menuDeleteOlderThanWeek.setText("Starsze niż tydzień");
+        menuDeleteOlderThanWeek.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuDeleteOlderThanWeekActionPerformed(evt);
+            }
+        });
+        menuDelete.add(menuDeleteOlderThanWeek);
+
+        menuDeleteOlderThanMonth.setText("Starsze niż miesiąc");
+        menuDeleteOlderThanMonth.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuDeleteOlderThanMonthActionPerformed(evt);
+            }
+        });
+        menuDelete.add(menuDeleteOlderThanMonth);
+
+        menuDeleteOlderThanYear.setText("Starsze niż rok");
+        menuDeleteOlderThanYear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuDeleteOlderThanYearActionPerformed(evt);
+            }
+        });
+        menuDelete.add(menuDeleteOlderThanYear);
+
+        menuDeleteOlderThanAnyValue.setText("Wprowadź wartość");
+        menuDeleteOlderThanAnyValue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuDeleteOlderThanAnyValueActionPerformed(evt);
+            }
+        });
+        menuDelete.add(menuDeleteOlderThanAnyValue);
+
+        mbCalendar.add(menuDelete);
+
         menuCalendar.setText("Pomoc");
 
         menuCalendar1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
@@ -421,17 +521,7 @@ public class Application extends javax.swing.JFrame {
 
 
     private void btnDeleteEventActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteEventActionPerformed
-       try{
-           String sql = "delete from events where id =?";
-           pst = conn.prepareStatement(sql);
-           pst.setString(1,tfID.getText());
-           pst.execute();
-           JOptionPane.showMessageDialog(null,"Usunięto");
-       }catch(Exception e){
-           JOptionPane.showMessageDialog(null,e);
-       }
-       Update_table();
-           
+       deleteEvent();
     }//GEN-LAST:event_btnDeleteEventActionPerformed
 
     private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
@@ -442,22 +532,7 @@ public class Application extends javax.swing.JFrame {
 
     private void btnAddEventActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddEventActionPerformed
 
-        try {
-
-            String sql = "insert into events values(id,?,?,?)";
-            pst = conn.prepareStatement(sql);
-            pst.setString(1, ((JTextField) dcEventDate.getDateEditor().getUiComponent()).getText());
-            pst.setString(2, tfPlace.getText());
-            pst.setString(3, taEvent.getText());
-
-            pst.execute();
-            JOptionPane.showMessageDialog(null, "Dodano nowe wydarznie!");
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
-        }
-        Update_table();
-
+        addToDatabase();
     }//GEN-LAST:event_btnAddEventActionPerformed
 
     private void menuCalendar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCalendar1ActionPerformed
@@ -473,38 +548,102 @@ public class Application extends javax.swing.JFrame {
     }//GEN-LAST:event_tfIDActionPerformed
 
     private void tblDataBaseDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDataBaseDataMouseClicked
-       try{
-           int row = tblDataBaseData.getSelectedRow();
-           String tblDataBase_click=(tblDataBaseData.getModel().getValueAt(row, 0)).toString();
-           String sql = "select* from events where id="+tblDataBase_click+"";
-           pst=conn.prepareStatement(sql);
-           rs=pst.executeQuery();
-           if(rs.next()){
-               String add1 = rs.getString("id");
-               tfID.setText(add1);
-               String add2 = rs.getString("miejsce");
-               tfPlace.setText(add2);
-               Date add3 = rs.getDate("data");
-               dcEventDate.setDate(add3);
-               
-           }
-           
-           
-       } catch(Exception e){
-           JOptionPane.showMessageDialog(null, e);
-       }
+      
+       showDataFromDataBaseTable();
     }//GEN-LAST:event_tblDataBaseDataMouseClicked
 
     private void btnSetAlarmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSetAlarmActionPerformed
-        String alarmTime =("1970.01.01 00:00:00");
-        try{
-        alarmTime = (new SimpleDateFormat("yyyy.MM.dd kk:mm:ss").format(spinerTime.getValue()));
-        
-        }catch(Exception e ){
-            JOptionPane.showMessageDialog(null, e);
-        }
-        JOptionPane.showMessageDialog(null, "Alarm ustawiony na : "+alarmTime);
+        setAlarm();
     }//GEN-LAST:event_btnSetAlarmActionPerformed
+
+    private void menuDeleteOlderThan1DayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDeleteOlderThan1DayActionPerformed
+        
+        try{
+           String sql = "DELETE FROM events WHERE data < DATE_SUB(NOW(), INTERVAL 1 DAY);";
+           pst = conn.prepareStatement(sql);
+           int deleted = pst.executeUpdate();
+           
+           
+           if(deleted == 0)
+           JOptionPane.showMessageDialog(null,"Nie naleziono zdarzenia starszego niż 1 dzień");
+           else{
+               JOptionPane.showMessageDialog(null,"Usunięto");
+           }
+       }catch(Exception e){
+           JOptionPane.showMessageDialog(null,e);
+       }
+       Update_table();
+    }//GEN-LAST:event_menuDeleteOlderThan1DayActionPerformed
+
+    private void menuDeleteOlderThanWeekActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDeleteOlderThanWeekActionPerformed
+         try{
+           String sql = "DELETE FROM events WHERE data < DATE_SUB(NOW(), INTERVAL 1 WEEK);";
+           pst = conn.prepareStatement(sql);
+           int deleted = pst.executeUpdate();
+           if(deleted == 0)
+           JOptionPane.showMessageDialog(null,"Nie naleziono zdarzenia starszego niż tydzień");
+           else{
+               JOptionPane.showMessageDialog(null,"Usunięto");
+           }
+       }catch(Exception e){
+           JOptionPane.showMessageDialog(null,e);
+       }
+       Update_table();
+    }//GEN-LAST:event_menuDeleteOlderThanWeekActionPerformed
+
+    private void menuDeleteOlderThanAnyValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDeleteOlderThanAnyValueActionPerformed
+         try{
+            String value = JOptionPane.showInputDialog("Usuń starsze niż :");
+                    
+           String sql = "DELETE FROM events WHERE data < DATE_SUB(NOW(), INTERVAL ? DAY);";
+           pst = conn.prepareStatement(sql);
+           pst.setString(1,value);
+           int deleted = pst.executeUpdate();
+           
+           if(deleted == 0)
+               
+           JOptionPane.showMessageDialog(null,"Nie naleziono zdarzenia starszego niż "+ value + " dni");
+           else{
+               JOptionPane.showMessageDialog(null,"Usunięto");
+           }
+       }catch(Exception e){
+           JOptionPane.showMessageDialog(null,e);
+       }
+         
+       Update_table();
+    }//GEN-LAST:event_menuDeleteOlderThanAnyValueActionPerformed
+
+    private void menuDeleteOlderThanMonthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDeleteOlderThanMonthActionPerformed
+         try{
+           String sql = "DELETE FROM events WHERE data < DATE_SUB(NOW(), INTERVAL 1 MONTH);";
+           pst = conn.prepareStatement(sql);
+           int deleted =pst.executeUpdate();
+           if(deleted == 0)
+           JOptionPane.showMessageDialog(null,"Nie naleziono zdarzenia starszego niż miesiąc");
+           else{
+               JOptionPane.showMessageDialog(null,"Usunięto");
+           }
+       }catch(Exception e){
+           JOptionPane.showMessageDialog(null,e);
+       }
+       Update_table();
+    }//GEN-LAST:event_menuDeleteOlderThanMonthActionPerformed
+
+    private void menuDeleteOlderThanYearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDeleteOlderThanYearActionPerformed
+         try{
+           String sql = "DELETE FROM events WHERE data < DATE_SUB(NOW(), INTERVAL 1 YEAR);";
+           pst = conn.prepareStatement(sql);
+           int deleted = pst.executeUpdate();
+           if(deleted == 0)
+           JOptionPane.showMessageDialog(null,"Nie naleziono zdarzenia starszego niż rok");
+           else{
+               JOptionPane.showMessageDialog(null,"Usunięto");
+           }
+       }catch(Exception e){
+           JOptionPane.showMessageDialog(null,e);
+       }
+       Update_table();
+    }//GEN-LAST:event_menuDeleteOlderThanYearActionPerformed
 
     /**
      * @param args the command line arguments
@@ -567,6 +706,12 @@ public class Application extends javax.swing.JFrame {
     private javax.swing.JMenuBar mbCalendar;
     private javax.swing.JMenu menuCalendar;
     private javax.swing.JMenuItem menuCalendar1;
+    private javax.swing.JMenu menuDelete;
+    private javax.swing.JMenuItem menuDeleteOlderThan1Day;
+    private javax.swing.JMenuItem menuDeleteOlderThanAnyValue;
+    private javax.swing.JMenuItem menuDeleteOlderThanMonth;
+    private javax.swing.JMenuItem menuDeleteOlderThanWeek;
+    private javax.swing.JMenuItem menuDeleteOlderThanYear;
     private javax.swing.JSpinner spinerTime;
     private javax.swing.JTextArea taEvent;
     private javax.swing.JTable tblDataBaseData;

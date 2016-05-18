@@ -31,6 +31,53 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="menuDelete">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Usu&#x144;"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="menuDeleteOlderThan1Day">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Starsze ni&#x17c; 1 dzie&#x144;"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuDeleteOlderThan1DayActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuDeleteOlderThanWeek">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Starsze ni&#x17c; tydzie&#x144;"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuDeleteOlderThanWeekActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuDeleteOlderThanMonth">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Starsze ni&#x17c; miesi&#x105;c"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuDeleteOlderThanMonthActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuDeleteOlderThanYear">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Starsze ni&#x17c; rok"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuDeleteOlderThanYearActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuDeleteOlderThanAnyValue">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Wprowad&#x17a; warto&#x15b;&#x107;"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuDeleteOlderThanAnyValueActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="menuCalendar">
           <Properties>
             <Property name="text" type="java.lang.String" value="Pomoc"/>
