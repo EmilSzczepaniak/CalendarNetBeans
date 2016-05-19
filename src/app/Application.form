@@ -24,7 +24,7 @@
                   <KeyStroke key="Ctrl+S"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\menu_save_icon.png"/>
+                  <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\icon\menu_save_icon.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Zapisz"/>
               </Properties>
@@ -74,7 +74,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuDeleteOlderThanAnyValue">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\terminal_icon.png"/>
+                  <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\icon\terminal_icon.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Wprowad&#x17a; warto&#x15b;&#x107;"/>
               </Properties>
@@ -95,7 +95,7 @@
                   <KeyStroke key="Ctrl+H"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\about_menu_icon.png"/>
+                  <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\icon\about_menu_icon.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="O programie"/>
               </Properties>
@@ -120,7 +120,7 @@
   <SyntheticProperties>
     <SyntheticProperty name="menuBar" type="java.lang.String" value="mbCalendar"/>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
-    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="true"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -145,7 +145,7 @@
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="20" y="371" width="330" height="72"/>
+          <AbsoluteConstraints x="20" y="323" width="330" height="120"/>
         </Constraint>
       </Constraints>
 
@@ -212,70 +212,17 @@
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblDataBaseDataMouseClicked"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JTable(){&#xa;    public boolean isCellEditable(int rowIndex, int colIndex){&#xa;        return false;&#xa;    }&#xa;}"/>
+            <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="Application_tblDataBaseData"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JSpinner" name="spinerTime">
-      <Properties>
-        <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-          <SpinnerModel initial="now" stepSize="11" type="date"/>
-        </Property>
-        <Property name="toolTipText" type="java.lang.String" value=""/>
-        <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-          <Color id="Default Cursor"/>
-        </Property>
-        <Property name="editor" type="javax.swing.JComponent" editor="org.netbeans.modules.form.editors.SpinnerEditorEditor">
-          <SpinnerEditor format="yyyy-MM-dd kk:mm:ss" type="1"/>
-        </Property>
-        <Property name="name" type="java.lang.String" value="" noResource="true"/>
-      </Properties>
-      <Events>
-        <EventHandler event="ancestorAdded" listener="javax.swing.event.AncestorListener" parameters="javax.swing.event.AncestorEvent" handler="spinerTimeAncestorAdded"/>
-      </Events>
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="71" y="315" width="160" height="30"/>
-        </Constraint>
-      </Constraints>
-    </Component>
-    <Component class="javax.swing.JTextField" name="tfID">
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tfIDActionPerformed"/>
-      </Events>
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="71" y="193" width="147" height="30"/>
-        </Constraint>
-      </Constraints>
-    </Component>
-    <Component class="javax.swing.JTextField" name="tfPlace">
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="71" y="229" width="147" height="30"/>
-        </Constraint>
-      </Constraints>
-    </Component>
-    <Component class="com.toedter.calendar.JDateChooser" name="dcEventDate">
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="71" y="270" width="194" height="30"/>
-        </Constraint>
-      </Constraints>
-    </Component>
-    <Component class="javax.swing.JLabel" name="jLabel5">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Godzina"/>
-      </Properties>
-      <Constraints>
-        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-          <AbsoluteConstraints x="20" y="320" width="-1" height="-1"/>
-        </Constraint>
-      </Constraints>
-    </Component>
     <Container class="javax.swing.JPanel" name="jPanel1">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-          <Color blue="ce" green="b1" red="0" type="rgb"/>
+          <Color blue="99" green="99" red="0" type="rgb"/>
         </Property>
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="66" green="66" red="0" type="rgb"/>
@@ -292,40 +239,46 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="btnAddEvent" min="-2" pref="330" max="-2" attributes="0"/>
+                      <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="166" max="-2" attributes="0"/>
+                          <Component id="btnSetAlarm" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel2" min="-2" pref="30" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <EmptySpace pref="31" max="32767" attributes="0"/>
+                          <Component id="btnDeleteEvent" min="-2" pref="130" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="185" max="-2" attributes="0"/>
+                          <Component id="btnExit" min="-2" pref="125" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="btnAddEvent" min="-2" pref="330" max="-2" attributes="0"/>
-                              <Component id="btnSetAlarm" min="-2" max="-2" attributes="0"/>
-                              <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace pref="31" max="32767" attributes="0"/>
-                                  <Component id="btnDeleteEvent" min="-2" pref="130" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="185" max="-2" attributes="0"/>
-                                  <Component id="btnExit" min="-2" pref="125" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
-                                  <Component id="jLabel1" min="-2" pref="365" max="-2" attributes="0"/>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
+                          <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
+                          <Component id="jLabel1" min="-2" pref="365" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
               <Component id="filler1" alignment="0" max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="dcEventDate" min="-2" pref="194" max="-2" attributes="0"/>
+                      <Component id="tfPlace" min="-2" pref="147" max="-2" attributes="0"/>
+                      <Component id="spinerTime" alignment="0" min="-2" pref="160" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
@@ -336,15 +289,23 @@
                       <Component id="jLabel1" max="32767" attributes="0"/>
                       <Component id="jPanel2" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="39" max="-2" attributes="0"/>
-                  <Component id="jLabel2" min="-2" pref="28" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="tfPlace" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="jLabel3" alignment="3" min="-2" pref="28" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="jLabel3" min="-2" pref="28" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="jLabel4" min="-2" pref="29" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
-                  <Component id="btnSetAlarm" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="98" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="dcEventDate" min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="jLabel4" min="-2" pref="29" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="btnSetAlarm" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="spinerTime" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace pref="145" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="btnExit" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
                       <Component id="btnDeleteEvent" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
@@ -438,7 +399,7 @@
         <Component class="javax.swing.JButton" name="btnSetAlarm">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\alarm_icon.png"/>
+              <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\icon\alarm_icon.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Ustaw alarm"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
@@ -452,14 +413,14 @@
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\Calendar_Logo.png"/>
+              <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\icon\Calendar_Logo.png"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btnExit">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\exit_icon.png"/>
+              <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\icon\exit_icon.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Wyjd&#x17a;"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
@@ -469,11 +430,6 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnExitActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel2">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="ID"/>
-          </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
           <Properties>
@@ -498,7 +454,7 @@
         <Component class="javax.swing.JButton" name="btnDeleteEvent">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\delete_icon.png"/>
+              <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\icon\delete_icon.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Usu&#x144;"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
@@ -512,7 +468,7 @@
         <Component class="javax.swing.JButton" name="btnAddEvent">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\add_icon.png"/>
+              <Image iconType="2" name="C:\Users\Emil\Documents\GitHub\CalendarNetBeans\icon\add_icon.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Dodaj"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
@@ -522,6 +478,33 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAddEventActionPerformed"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JTextField" name="tfPlace">
+        </Component>
+        <Component class="com.toedter.calendar.JDateChooser" name="dcEventDate">
+        </Component>
+        <Component class="javax.swing.JSpinner" name="spinerTime">
+          <Properties>
+            <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
+              <SpinnerModel initial="now" stepSize="11" type="date"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value=""/>
+            <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+              <Color id="Default Cursor"/>
+            </Property>
+            <Property name="editor" type="javax.swing.JComponent" editor="org.netbeans.modules.form.editors.SpinnerEditorEditor">
+              <SpinnerEditor format="yyyy-MM-dd kk:mm:ss" type="1"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="" noResource="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="ancestorAdded" listener="javax.swing.event.AncestorListener" parameters="javax.swing.event.AncestorEvent" handler="spinerTimeAncestorAdded"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel5">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Godzina"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

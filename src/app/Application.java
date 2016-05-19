@@ -5,12 +5,10 @@
  */
 package app;
 
-import java.applet.AudioClip;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import app.dataHelp.DBConnect;
+import app.business.Processing;
+import app.business.ApplicationInterface;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
 import static java.lang.Thread.sleep;
@@ -19,33 +17,26 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JSpinner;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SpinnerDateModel;
-import javax.swing.Timer;
-import javax.swing.table.TableModel;
 import net.proteanit.sql.DbUtils;
 
 /**
  *
  * @author Emil
  */
-public class Application extends javax.swing.JFrame {
+public class Application extends javax.swing.JFrame implements ApplicationInterface{
     static String dateAlarm ;
     Connection conn = null;
     ResultSet rs = null;
     PreparedStatement pst = null;
     JLabel myImage;
+    String id;
     /**
      * Creates new form Application
      */
@@ -57,12 +48,18 @@ public class Application extends javax.swing.JFrame {
         Update_table();
         showCurrentTime();
         
-        setIconImage(new ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\src\\app\\app_icon.png").getImage());
+        setIconImage(new ImageIcon("app_icon.png").getImage());
         
     }
+    
+    
     @SuppressWarnings("empty-statement")
-    private void saveToCSV() throws IOException{
-        String separator = ";";
+    public void ValidationOfEvents(){
+        
+    }
+    @Override
+    public void saveToCSV() throws IOException{
+         String separator = ";";
         try{
             FileWriter csv = new FileWriter("calendar.csv");
            for(int i =0;i < tblDataBaseData.getColumnCount(); i++){
@@ -86,11 +83,12 @@ public class Application extends javax.swing.JFrame {
         }
     
     }
-    private void deleteEvent(){
+    public void deleteEvent(){
         try{
+           
            String sql = "delete from events where id =?";
            pst = conn.prepareStatement(sql);
-           pst.setString(1,tfID.getText());
+           pst.setString(1,id);
            pst.execute();
            JOptionPane.showMessageDialog(null,"Usunięto");
        }catch(Exception e){
@@ -99,21 +97,26 @@ public class Application extends javax.swing.JFrame {
        Update_table();
            
     }
-    private void showDataFromDataBaseTable(){
+    public void showDataFromDataBaseTable(){
          try{
+           
            int row = tblDataBaseData.getSelectedRow();
            String tblDataBase_click=(tblDataBaseData.getModel().getValueAt(row, 0)).toString();
            String sql = "select* from events where id="+tblDataBase_click+"";
            pst=conn.prepareStatement(sql);
            rs=pst.executeQuery();
+           
            if(rs.next()){
                String add1 = rs.getString("id");
-               tfID.setText(add1);
+               //tfID.setText(add1);
+               id = add1;
                String add2 = rs.getString("miejsce");
                tfPlace.setText(add2);
                Date add3 = rs.getDate("data");
                dcEventDate.setDate(add3);
-               
+               taEvent.setText("");
+               String add4 = rs.getString("opis");
+               taEvent.append(add4);
            }
            
            
@@ -121,7 +124,7 @@ public class Application extends javax.swing.JFrame {
            JOptionPane.showMessageDialog(null, e);
        }
     }
-    private void setAlarm(){
+    public void setAlarm(){
         String alarmTime =("1970.01.01 00:00:00");
         try{
         alarmTime = (new SimpleDateFormat("yyyy.MM.dd kk:mm:ss").format(spinerTime.getValue()));
@@ -131,14 +134,21 @@ public class Application extends javax.swing.JFrame {
         }
         JOptionPane.showMessageDialog(null, "Alarm ustawiony na : "+alarmTime);
     }
-    private void addToDatabase(){
+    public void addToDatabase(){
         try {
 
             String sql = "insert into events values(id,?,?,?)";
+            //String sql1 = "select data from events where data = 2016-05-19";
+            
+            //pst = conn.prepareStatement(sql1);
+            
+           // pst.execute();
+            
             pst = conn.prepareStatement(sql);
             pst.setString(1, ((JTextField) dcEventDate.getDateEditor().getUiComponent()).getText());
             pst.setString(2, tfPlace.getText());
             pst.setString(3, taEvent.getText());
+            
 
             pst.execute();
             JOptionPane.showMessageDialog(null, "Dodano nowe wydarznie!");
@@ -151,7 +161,7 @@ public class Application extends javax.swing.JFrame {
     
 
 
-    private void Update_table() {
+    public void Update_table() {
         try {
             String sql = "SELECT* FROM events ";
             pst = conn.prepareStatement(sql);
@@ -163,29 +173,28 @@ public class Application extends javax.swing.JFrame {
         }
     }
 
-   private void PlayAlarm(){
+   public void PlayAlarm(){
    
     File audioFile = new File("alarm_alert.WAV");
     try{
         Clip clip = AudioSystem.getClip();
         clip.open(AudioSystem.getAudioInputStream(audioFile));
         clip.start();
-        
-        int reply = JOptionPane.showConfirmDialog(null,
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+        int reply;
+       do{ 
+            reply = JOptionPane.showConfirmDialog(null,
                                           "Czy chcesz wyłączyć alarm ?",
                                           "Alarm",
                                           JOptionPane.YES_NO_OPTION,JOptionPane.WARNING_MESSAGE);
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
-       if(reply == JOptionPane.OK_OPTION){
-           clip.stop();  
-       }
+       }while(reply != JOptionPane.OK_OPTION);clip.stop();
     }catch(Exception e){
         JOptionPane.showMessageDialog(null, e);
     }
     
    }
    
-   private void showCurrentTime(){
+   public void showCurrentTime(){
       
     Thread clock = new Thread(){
            public void run(){
@@ -237,12 +246,11 @@ public class Application extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         taEvent = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
-        tblDataBaseData = new javax.swing.JTable();
-        spinerTime = new javax.swing.JSpinner();
-        tfID = new javax.swing.JTextField();
-        tfPlace = new javax.swing.JTextField();
-        dcEventDate = new com.toedter.calendar.JDateChooser();
-        jLabel5 = new javax.swing.JLabel();
+        tblDataBaseData = new javax.swing.JTable(){
+            public boolean isCellEditable(int rowIndex, int colIndex){
+                return false;
+            }
+        };
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         timeLabel = new javax.swing.JLabel();
@@ -250,12 +258,15 @@ public class Application extends javax.swing.JFrame {
         btnSetAlarm = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         btnExit = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 32767));
         btnDeleteEvent = new javax.swing.JButton();
         btnAddEvent = new javax.swing.JButton();
+        tfPlace = new javax.swing.JTextField();
+        dcEventDate = new com.toedter.calendar.JDateChooser();
+        spinerTime = new javax.swing.JSpinner();
+        jLabel5 = new javax.swing.JLabel();
         mbCalendar = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -278,7 +289,7 @@ public class Application extends javax.swing.JFrame {
         jScrollPane2.setViewportView(taEvent);
 
         getContentPane().add(jScrollPane2);
-        jScrollPane2.setBounds(20, 371, 330, 72);
+        jScrollPane2.setBounds(20, 323, 330, 120);
 
         tblDataBaseData.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -301,40 +312,7 @@ public class Application extends javax.swing.JFrame {
         getContentPane().add(jScrollPane3);
         jScrollPane3.setBounds(382, 183, 440, 260);
 
-        spinerTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.HOUR_OF_DAY));
-        spinerTime.setToolTipText("");
-        spinerTime.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        spinerTime.setEditor(new javax.swing.JSpinner.DateEditor(spinerTime, "yyyy-MM-dd kk:mm:ss"));
-        spinerTime.setName(""); // NOI18N
-        spinerTime.addAncestorListener(new javax.swing.event.AncestorListener() {
-            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
-            }
-            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
-                spinerTimeAncestorAdded(evt);
-            }
-            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
-            }
-        });
-        getContentPane().add(spinerTime);
-        spinerTime.setBounds(71, 315, 160, 30);
-
-        tfID.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfIDActionPerformed(evt);
-            }
-        });
-        getContentPane().add(tfID);
-        tfID.setBounds(71, 193, 147, 30);
-        getContentPane().add(tfPlace);
-        tfPlace.setBounds(71, 229, 147, 30);
-        getContentPane().add(dcEventDate);
-        dcEventDate.setBounds(71, 270, 194, 30);
-
-        jLabel5.setText("Godzina");
-        getContentPane().add(jLabel5);
-        jLabel5.setBounds(20, 320, 45, 16);
-
-        jPanel1.setBackground(new java.awt.Color(0, 177, 206));
+        jPanel1.setBackground(new java.awt.Color(0, 153, 153));
         jPanel1.setForeground(new java.awt.Color(0, 102, 102));
         jPanel1.setToolTipText("");
 
@@ -376,7 +354,7 @@ public class Application extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        btnSetAlarm.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\alarm_icon.png")); // NOI18N
+        btnSetAlarm.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\icon\\alarm_icon.png")); // NOI18N
         btnSetAlarm.setText("Ustaw alarm");
         btnSetAlarm.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnSetAlarm.addActionListener(new java.awt.event.ActionListener() {
@@ -385,9 +363,9 @@ public class Application extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\Calendar_Logo.png")); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\icon\\Calendar_Logo.png")); // NOI18N
 
-        btnExit.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\exit_icon.png")); // NOI18N
+        btnExit.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\icon\\exit_icon.png")); // NOI18N
         btnExit.setText("Wyjdź");
         btnExit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnExit.addActionListener(new java.awt.event.ActionListener() {
@@ -396,13 +374,11 @@ public class Application extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setText("ID");
-
         jLabel4.setText("Data");
 
         jLabel3.setText("Miejsce");
 
-        btnDeleteEvent.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\delete_icon.png")); // NOI18N
+        btnDeleteEvent.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\icon\\delete_icon.png")); // NOI18N
         btnDeleteEvent.setText("Usuń");
         btnDeleteEvent.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnDeleteEvent.addActionListener(new java.awt.event.ActionListener() {
@@ -411,7 +387,7 @@ public class Application extends javax.swing.JFrame {
             }
         });
 
-        btnAddEvent.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\add_icon.png")); // NOI18N
+        btnAddEvent.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\icon\\add_icon.png")); // NOI18N
         btnAddEvent.setText("Dodaj");
         btnAddEvent.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnAddEvent.addActionListener(new java.awt.event.ActionListener() {
@@ -420,36 +396,59 @@ public class Application extends javax.swing.JFrame {
             }
         });
 
+        spinerTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.HOUR_OF_DAY));
+        spinerTime.setToolTipText("");
+        spinerTime.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        spinerTime.setEditor(new javax.swing.JSpinner.DateEditor(spinerTime, "yyyy-MM-dd kk:mm:ss"));
+        spinerTime.setName(""); // NOI18N
+        spinerTime.addAncestorListener(new javax.swing.event.AncestorListener() {
+            public void ancestorMoved(javax.swing.event.AncestorEvent evt) {
+            }
+            public void ancestorAdded(javax.swing.event.AncestorEvent evt) {
+                spinerTimeAncestorAdded(evt);
+            }
+            public void ancestorRemoved(javax.swing.event.AncestorEvent evt) {
+            }
+        });
+
+        jLabel5.setText("Godzina");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnAddEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(166, 166, 166)
+                        .addComponent(btnSetAlarm)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap())
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                        .addComponent(btnDeleteEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(185, 185, 185)
+                        .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnAddEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnSetAlarm)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
-                                .addComponent(btnDeleteEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(185, 185, 185)
-                                .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(28, 28, 28))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(64, 64, 64)
-                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                        .addGap(64, 64, 64)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addComponent(filler1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(dcEventDate, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfPlace, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(spinerTime, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -458,15 +457,20 @@ public class Application extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(39, 39, 39)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tfPlace, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSetAlarm)
-                .addGap(98, 98, 98)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(dcEventDate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSetAlarm)
+                    .addComponent(spinerTime, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 145, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnDeleteEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -483,7 +487,7 @@ public class Application extends javax.swing.JFrame {
         jMenu1.setText("Plik");
 
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\menu_save_icon.png")); // NOI18N
+        jMenuItem1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\icon\\menu_save_icon.png")); // NOI18N
         jMenuItem1.setText("Zapisz");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -528,7 +532,7 @@ public class Application extends javax.swing.JFrame {
         });
         menuDelete.add(menuDeleteOlderThanYear);
 
-        menuDeleteOlderThanAnyValue.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\terminal_icon.png")); // NOI18N
+        menuDeleteOlderThanAnyValue.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\icon\\terminal_icon.png")); // NOI18N
         menuDeleteOlderThanAnyValue.setText("Wprowadź wartość");
         menuDeleteOlderThanAnyValue.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -542,7 +546,7 @@ public class Application extends javax.swing.JFrame {
         menuCalendar.setText("Pomoc");
 
         menuCalendar1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
-        menuCalendar1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\about_menu_icon.png")); // NOI18N
+        menuCalendar1.setIcon(new javax.swing.ImageIcon("C:\\Users\\Emil\\Documents\\GitHub\\CalendarNetBeans\\icon\\about_menu_icon.png")); // NOI18N
         menuCalendar1.setText("O programie");
         menuCalendar1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -556,6 +560,7 @@ public class Application extends javax.swing.JFrame {
         setJMenuBar(mbCalendar);
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -575,16 +580,12 @@ public class Application extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAddEventActionPerformed
 
     private void menuCalendar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCalendar1ActionPerformed
-        JOptionPane.showMessageDialog(rootPane, "Hello Calendar !");
+        JOptionPane.showMessageDialog(rootPane, " \n\n\n Aplikacja Calendar pozwala zapisywanie terminów zdarzeń, ich opisów i miejsc \n Ustawianie przypomnień dźwiękowych nawybrany czas \n Korzystanie z graficznego kalendarza \n Kasowanie zdarzeń starszych niż podana ilość dni \n Wyświetlanie okna dialogowoego o programie \n Posiada menu główne dające dostęp do kilku z funkcji aplikacji \n Aplikacja Calendar obsługiwana jest przy pomocy myszy i klawatury \n \n \n Autorzy :\n Emil Szczepaniak ");
     }//GEN-LAST:event_menuCalendar1ActionPerformed
 
     private void spinerTimeAncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_spinerTimeAncestorAdded
 
     }//GEN-LAST:event_spinerTimeAncestorAdded
-
-    private void tfIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfIDActionPerformed
-        
-    }//GEN-LAST:event_tfIDActionPerformed
 
     private void tblDataBaseDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDataBaseDataMouseClicked
       
@@ -778,7 +779,6 @@ public class Application extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser dcEventDate;
     private javax.swing.Box.Filler filler1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -800,7 +800,6 @@ public class Application extends javax.swing.JFrame {
     private javax.swing.JSpinner spinerTime;
     private javax.swing.JTextArea taEvent;
     private javax.swing.JTable tblDataBaseData;
-    private javax.swing.JTextField tfID;
     private javax.swing.JTextField tfPlace;
     private javax.swing.JLabel timeLabel;
     // End of variables declaration//GEN-END:variables

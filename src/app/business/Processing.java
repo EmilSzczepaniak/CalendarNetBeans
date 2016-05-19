@@ -1,6 +1,7 @@
 
-package app;
+package app.business;
 
+import app.dataHelp.DBConnect;
 import java.sql.*;
 
 /**

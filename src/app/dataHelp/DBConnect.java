@@ -1,12 +1,6 @@
-package app;
+package app.dataHelp;
 
-import java.awt.BorderLayout;
 import java.sql.*;
-import java.util.Vector;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 
 /**
  *
